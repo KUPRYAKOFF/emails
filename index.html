@@ -2,158 +2,615 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
   <title>Подтверждение email</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Анимированные круги на фоне */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 20s infinite ease-in-out;
+      z-index: 0;
+    }
+
+    body::before {
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      left: -100px;
+    }
+
+    body::after {
+      width: 300px;
+      height: 300px;
+      bottom: -100px;
+      right: -100px;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(50px, -50px) scale(1.1); }
+      66% { transform: translate(-30px, 30px) scale(0.9); }
     }
 
     .card {
+      position: relative;
+      z-index: 1;
       width: 100%;
       max-width: 480px;
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     h1 {
-      margin: 0 0 18px;
-      font-size: 24px;
+      font-size: 28px;
       text-align: center;
-      color: #222;
+      color: #1a1a2e;
+      margin-bottom: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
+    .view {
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Вкладки групп */
     .tabs {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
+      margin-bottom: 24px;
+      padding: 4px;
+      background: #f0f2f5;
+      border-radius: 14px;
     }
 
     .tab {
-      flex: 1;
-      min-width: 110px;
-      padding: 10px;
-      border: 1px solid #d9dee3;
-      border-radius: 8px;
-      background: #f8f9fa;
-      cursor: pointer;
+      padding: 10px 8px;
+      border-radius: 10px;
       text-align: center;
-      font-weight: bold;
-      color: #444;
-      transition: 0.2s;
+      font-weight: 600;
+      font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .tab.active {
-      background: #0d6efd;
-      border-color: #0d6efd;
-      color: #fff;
+      background: white;
+      color: #667eea;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
+    .tab:hover:not(.active) {
+      color: #374151;
+    }
+
+    .tab:active {
+      transform: scale(0.96);
+    }
+
+    /* Поля формы */
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-      color: #333;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+      font-size: 14px;
     }
 
-    select,
     input {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cfd6dd;
-      border-radius: 8px;
+      padding: 14px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
       font-size: 16px;
-      box-sizing: border-box;
-      background: #fff;
+      background: white;
+      transition: all 0.3s ease;
+      outline: none;
+      font-family: inherit;
     }
 
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
+    input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
     }
 
-    .btn-primary {
-      background: #0d6efd;
-      color: white;
-      font-weight: bold;
-    }
-
-    .btn-primary:disabled {
-      background: #b9c6d3;
+    input:disabled {
+      background: #f9fafb;
       cursor: not-allowed;
     }
 
-    .btn-secondary {
-      background: #6c757d;
+    /* Кастомный dropdown */
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-trigger {
+      width: 100%;
+      padding: 14px 44px 14px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 16px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #374151;
+    }
+
+    .dropdown-trigger:active {
+      transform: scale(0.98);
+    }
+
+    .dropdown-trigger.open {
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .dropdown-trigger::after {
+      content: '';
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid #9ca3af;
+      border-bottom: 2px solid #9ca3af;
+      transform: translateY(-70%) rotate(45deg);
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown-trigger.open::after {
+      transform: translateY(-30%) rotate(-135deg);
+      border-color: #667eea;
+    }
+
+    .dropdown-trigger.placeholder {
+      color: #9ca3af;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(0, 0, 0, 0.04);
+      max-height: 280px;
+      overflow-y: auto;
+      z-index: 100;
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .dropdown-menu.open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .dropdown-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 15px;
+      color: #374151;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-item:hover,
+    .dropdown-item:active {
+      background: #f9fafb;
+    }
+
+    .dropdown-item.selected {
+      background: #eff6ff;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .dropdown-item.submitted {
+      color: #d1d5db;
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+
+    .dropdown-item.submitted:hover {
+      background: transparent;
+    }
+
+    /* Кнопки */
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #e5e7eb;
+      color: #9ca3af;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-primary:not(:disabled):hover {
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #6b7280;
+      border: 2px solid #e5e7eb;
       margin-top: 10px;
     }
 
-    .btn-success {
-      background: #198754;
-      color: white;
-      font-weight: bold;
+    .btn-secondary:hover {
+      border-color: #d1d5db;
+      color: #374151;
     }
 
-    .hidden {
-      display: none;
-    }
-
+    /* Подтверждение */
     .confirm-box {
-      background: #f8f9fa;
-      border: 1px solid #e0e5ea;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 18px;
+      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid #e5e7eb;
     }
 
     .confirm-row {
+      display: flex;
+      align-items: center;
+      padding: 14px;
       margin-bottom: 10px;
-      font-size: 17px;
-      color: #222;
+      background: white;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      border: 2px solid transparent;
+    }
+
+    .confirm-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .confirm-row:hover {
+      background: #f9fafb;
+    }
+
+    .confirm-row.checked {
+      border-color: #667eea;
+      background: #eff6ff;
+    }
+
+    .confirm-row:active {
+      transform: scale(0.99);
+    }
+
+    /* Кастомный чекбокс */
+    .checkbox-wrapper {
+      position: relative;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .checkbox-wrapper input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .checkmark {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 2px solid #d1d5db;
+      border-radius: 6px;
+      background: white;
+      transition: all 0.2s ease;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .confirm-row.checked .checkmark {
+      background: #667eea;
+      border-color: #667eea;
+    }
+
+    .checkmark::after {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 3px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg) scale(0);
+      opacity: 0;
+      transition: all 0.2s ease;
+    }
+
+    .confirm-row.checked .checkmark::after {
+      transform: rotate(45deg) scale(1);
+      opacity: 1;
+    }
+
+    .confirm-content {
+      flex: 1;
+      min-width: 0;
     }
 
     .confirm-label {
-      font-weight: bold;
+      display: block;
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 2px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
+    .confirm-value {
+      display: block;
+      font-size: 15px;
+      color: #1a1a2e;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    /* Успех */
     .success-box {
       text-align: center;
-      padding: 10px 0;
+      padding: 20px 0;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+      animation: successPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes successPop {
+      0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+      }
+    }
+
+    .success-icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: white;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+      animation: drawCheck 0.5s 0.3s forwards ease-out;
+    }
+
+    @keyframes drawCheck {
+      to {
+        stroke-dashoffset: 0;
+      }
     }
 
     .success-title {
-      color: #198754;
+      color: #1a1a2e;
       font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 10px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .success-subtitle {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 24px;
     }
 
     .note {
-      margin-top: 14px;
+      margin-top: 16px;
       font-size: 13px;
-      color: #6c757d;
-      line-height: 1.4;
+      color: #6b7280;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    /* Спиннер загрузки */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Адаптив */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+        align-items: flex-start;
+        padding-top: 24px;
+      }
+
+      .card {
+        padding: 24px 20px;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 24px;
+      }
+
+      .tab {
+        font-size: 12px;
+        padding: 9px 6px;
+      }
+
+      .dropdown-menu {
+        max-height: 240px;
+      }
+
+      .confirm-row {
+        padding: 12px;
+      }
+
+      .confirm-value {
+        font-size: 14px;
+      }
+    }
+
+    /* Отключение выделения на мобилках */
+    .no-select {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    /* Скрытый скроллбар в dropdown */
+    .dropdown-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .dropdown-menu::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .dropdown-menu::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 3px;
+    }
+
+    .dropdown-menu::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
     }
   </style>
 </head>
@@ -163,18 +620,21 @@
     <h1>Подтверждение email</h1>
 
     <!-- Форма выбора -->
-    <div id="formView">
-      <div class="tabs">
+    <div id="formView" class="view">
+      <div class="tabs no-select">
         <div class="tab active" data-group="3ИСиП-24">3ИСиП-24</div>
         <div class="tab" data-group="3КСК-24">3КСК-24</div>
         <div class="tab" data-group="3РЗ-24">3РЗ-24</div>
       </div>
 
       <div class="form-group">
-        <label for="studentSelect">Ваши ФИО</label>
-        <select id="studentSelect">
-          <option value="">-- Выберите ФИО --</option>
-        </select>
+        <label>Ваши ФИО</label>
+        <div class="dropdown">
+          <div class="dropdown-trigger placeholder no-select" id="dropdownTrigger">
+            -- Выберите ФИО --
+          </div>
+          <div class="dropdown-menu" id="dropdownMenu"></div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -190,185 +650,211 @@
       <button id="nextBtn" class="btn-primary" disabled>Далее</button>
 
       <div class="note">
-        После ввода данных нажмите «Далее» и проверьте информацию перед отправкой.
+        Проверьте данные перед отправкой
       </div>
     </div>
 
     <!-- Подтверждение -->
-    <div id="confirmView" class="hidden">
+    <div id="confirmView" class="view hidden">
       <div class="confirm-box">
-        <div class="confirm-row">
-          <span class="confirm-label">Ваше ФИО:</span>
-          <span id="confirmName"></span>
+        <div class="confirm-row no-select" id="confirmRowName">
+          <label class="checkbox-wrapper">
+            <input type="checkbox" id="checkName">
+            <span class="checkmark"></span>
+          </label>
+          <div class="confirm-content">
+            <span class="confirm-label">ФИО</span>
+            <span class="confirm-value" id="confirmName"></span>
+          </div>
         </div>
 
-        <div class="confirm-row">
-          <span class="confirm-label">Ваш Email:</span>
-          <span id="confirmEmail"></span>
+        <div class="confirm-row no-select" id="confirmRowEmail">
+          <label class="checkbox-wrapper">
+            <input type="checkbox" id="checkEmail">
+            <span class="checkmark"></span>
+          </label>
+          <div class="confirm-content">
+            <span class="confirm-label">Email</span>
+            <span class="confirm-value" id="confirmEmail"></span>
+          </div>
         </div>
       </div>
 
-      <button id="submitBtn" class="btn-primary">Отправить</button>
+      <button id="submitBtn" class="btn-primary" disabled>Отправить</button>
       <button id="backBtn" class="btn-secondary">Назад</button>
     </div>
 
     <!-- Успех -->
-    <div id="successView" class="hidden">
+    <div id="successView" class="view hidden">
       <div class="success-box">
-        <div class="success-title">Данные успешно отправлены</div>
-        <button id="resetBtn" class="btn-success">Заполнить заново</button>
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <div class="success-title">Готово!</div>
+        <div class="success-subtitle">Ваши данные успешно отправлены</div>
       </div>
     </div>
   </div>
 
   <script>
-    /*****************************************************
-     * ВСТАВЬТЕ СЮДА URL ИЗ GOOGLE APPS SCRIPT
-     *****************************************************/
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxffG00zFwVomm1BKFpLE2sP5AUQbOrTlgDehkN2-pzNRYD_cTkktuVwAEuJb4f96gK/exec";
 
-
-    /*****************************************************
-     * ЗАПОЛНИТЕ МАССИВ СТУДЕНТОВ
-     *
-     * id — желательно должен совпадать со столбцом A
-     * name — ФИО из столбца B
-     *****************************************************/
     const STUDENTS = {
-  "3РЗ-24": [
-    { id: "1", name: "АНАНЬЕВА Лариса Сергеевна" },
-    { id: "2", name: "АНДРИЯНОВА Ксения Олеговна" },
-    { id: "3", name: "БАЕВ Александр Геннадьевич" },
-    { id: "4", name: "БАХАРЕВ Иван Денисович" },
-    { id: "5", name: "БИКМУХАМЕТОВ Егор Романович" },
-    { id: "6", name: "ВЕТРОВ Илья Андреевич" },
-    { id: "7", name: "ГАМЕРОВА Ксения Денисовна" },
-    { id: "8", name: "ГОРДЕЕВ Андрей Евгеньевич" },
-    { id: "9", name: "ГУНГАЕВ Тимур Валерьевич" },
-    { id: "10", name: "ДАВЛЕЧИНОВ Илья Денисович" },
-    { id: "11", name: "ДАРЕЕВ Константин Анатольевич" },
-    { id: "12", name: "ЗАЙЦЕВ Роман Эдуардович" },
-    { id: "13", name: "ЗАЛУЦКИЙ Евгений Романович" },
-    { id: "14", name: "КЛИМЕНТЬЕВ Матвей Сергеевич" },
-    { id: "15", name: "КОРОБОЧКИН Алексей Эдуардович" },
-    { id: "16", name: "КОЧУРОВ Валерий Алексеевич" },
-    { id: "17", name: "КРУТОВ Виталий Владимирович" },
-    { id: "18", name: "ЛАВРОВ Артём Романович" },
-    { id: "19", name: "ЛАШИН Данила Денисович" },
-    { id: "20", name: "МЕРИНОВА Елизавета Геннадьевна" },
-    { id: "21", name: "НИКИТИН Артём Евгеньевич" },
-    { id: "22", name: "ПАВЛОВ Руслан Николаевич" },
-    { id: "23", name: "ПЕРЕЛЯЕВ Никита Алексеевич" },
-    { id: "24", name: "ПОДПРУГИН Денис Вячеславович" },
-    { id: "25", name: "ПРОХОДАНОВ Вадим Андреевич" },
-    { id: "26", name: "РЕШЕТОВ Родион Романович" },
-    { id: "27", name: "РОМАНОВ Никита Дмитриевич" },
-    { id: "28", name: "САЛАЦКИЙ Степан Викторович" },
-    { id: "29", name: "СОНГОЛОВ Тимур Эрдэниевич" },
-    { id: "30", name: "СТЁПИН Никита Вадимович" },
-    { id: "31", name: "ТРУХИН Максим Александрович" },
-    { id: "32", name: "ХОЛУЕВ Дмитрий Вячеславович" },
-    { id: "33", name: "ХРОМУШКИН Евгений Сергеевич" },
-    { id: "34", name: "ЧУЧУПАЛ Ярослав Дмитриевич" },
-    { id: "35", name: "ШПАКОВА Светлана Алексеевна" },
-    { id: "36", name: "ЩУКИН Роман Анатольевич" }
-  ],
+      "3РЗ-24": [
+        { id: "1", name: "АНАНЬЕВА Лариса Сергеевна" },
+        { id: "2", name: "АНДРИЯНОВА Ксения Олеговна" },
+        { id: "3", name: "БАЕВ Александр Геннадьевич" },
+        { id: "4", name: "БАХАРЕВ Иван Денисович" },
+        { id: "5", name: "БИКМУХАМЕТОВ Егор Романович" },
+        { id: "6", name: "ВЕТРОВ Илья Андреевич" },
+        { id: "7", name: "ГАМЕРОВА Ксения Денисовна" },
+        { id: "8", name: "ГОРДЕЕВ Андрей Евгеньевич" },
+        { id: "9", name: "ГУНГАЕВ Тимур Валерьевич" },
+        { id: "10", name: "ДАВЛЕЧИНОВ Илья Денисович" },
+        { id: "11", name: "ДАРЕЕВ Константин Анатольевич" },
+        { id: "12", name: "ЗАЙЦЕВ Роман Эдуардович" },
+        { id: "13", name: "ЗАЛУЦКИЙ Евгений Романович" },
+        { id: "14", name: "КЛИМЕНТЬЕВ Матвей Сергеевич" },
+        { id: "15", name: "КОРОБОЧКИН Алексей Эдуардович" },
+        { id: "16", name: "КОЧУРОВ Валерий Алексеевич" },
+        { id: "17", name: "КРУТОВ Виталий Владимирович" },
+        { id: "18", name: "ЛАВРОВ Артём Романович" },
+        { id: "19", name: "ЛАШИН Данила Денисович" },
+        { id: "20", name: "МЕРИНОВА Елизавета Геннадьевна" },
+        { id: "21", name: "НИКИТИН Артём Евгеньевич" },
+        { id: "22", name: "ПАВЛОВ Руслан Николаевич" },
+        { id: "23", name: "ПЕРЕЛЯЕВ Никита Алексеевич" },
+        { id: "24", name: "ПОДПРУГИН Денис Вячеславович" },
+        { id: "25", name: "ПРОХОДАНОВ Вадим Андреевич" },
+        { id: "26", name: "РЕШЕТОВ Родион Романович" },
+        { id: "27", name: "РОМАНОВ Никита Дмитриевич" },
+        { id: "28", name: "САЛАЦКИЙ Степан Викторович" },
+        { id: "29", name: "СОНГОЛОВ Тимур Эрдэниевич" },
+        { id: "30", name: "СТЁПИН Никита Вадимович" },
+        { id: "31", name: "ТРУХИН Максим Александрович" },
+        { id: "32", name: "ХОЛУЕВ Дмитрий Вячеславович" },
+        { id: "33", name: "ХРОМУШКИН Евгений Сергеевич" },
+        { id: "34", name: "ЧУЧУПАЛ Ярослав Дмитриевич" },
+        { id: "35", name: "ШПАКОВА Светлана Алексеевна" },
+        { id: "36", name: "ЩУКИН Роман Анатольевич" }
+      ],
 
-  "3КСК-24": [
-    { id: "1", name: "АЛЕКСАНДРОВ Николай Дмитриевич" },
-    { id: "2", name: "АРУТЮНЯНЦ Ярослав Романович" },
-    { id: "3", name: "БАКШЕЕВ Максим Евгеньевич" },
-    { id: "4", name: "БОГДАНОВ Юрий Алексеевич" },
-    { id: "5", name: "БОЛОГОВ Григорий Максимович" },
-    { id: "6", name: "БУШМАКИН Дмитрий Андреевич" },
-    { id: "7", name: "ВОЛОШИН Даниил Игоревич" },
-    { id: "8", name: "ВОРОПАЕВ Сергей Вячеславович" },
-    { id: "9", name: "КАРАСЕВ Иван Сергеевич" },
-    { id: "10", name: "КЛИМАНОВ Артём Максимович" },
-    { id: "11", name: "КОБАК Андрей Александрович" },
-    { id: "12", name: "ЛАТЫШЕВА Анна Юрьевна" },
-    { id: "13", name: "МЕЛЬНИК Матвей Игоревич" },
-    { id: "14", name: "МИРИМЯН Сурен Гургенович" },
-    { id: "15", name: "НЕВЕРОВ Максим Иванович" },
-    { id: "16", name: "НЕСТЕРОВ Максим Сергеевич" },
-    { id: "17", name: "ОЛИНОВ Савелий Александрович" },
-    { id: "18", name: "ПАВЛЕНКО Даниил Дмитриевич" },
-    { id: "19", name: "ПАВЛУЦКИЙ Владимир Иванович" },
-    { id: "20", name: "ПИСКАЕВА Дарья Алексеевна" },
-    { id: "21", name: "ПОДОСИННИКОВА Полина Олеговна" },
-    { id: "22", name: "ПРОСКУРЯКОВ Кирилл Артемович" },
-    { id: "23", name: "РОМАШКИНА Дарья Антоновна" },
-    { id: "24", name: "САВЧУК Нестор Сергеевич" },
-    { id: "25", name: "САМАРИН Дмитрий Андреевич" },
-    { id: "26", name: "САФОНОВ Павел Алексеевич" },
-    { id: "27", name: "СОМАЛЮК Ярослав Александрович" },
-    { id: "28", name: "СТЕПАНЕЦ Мария Ивановна" },
-    { id: "29", name: "ШВЕДЧИКОВА Юлия Сергеевна" }
-  ],
+      "3КСК-24": [
+        { id: "1", name: "АЛЕКСАНДРОВ Николай Дмитриевич" },
+        { id: "2", name: "АРУТЮНЯНЦ Ярослав Романович" },
+        { id: "3", name: "БАКШЕЕВ Максим Евгеньевич" },
+        { id: "4", name: "БОГДАНОВ Юрий Алексеевич" },
+        { id: "5", name: "БОЛОГОВ Григорий Максимович" },
+        { id: "6", name: "БУШМАКИН Дмитрий Андреевич" },
+        { id: "7", name: "ВОЛОШИН Даниил Игоревич" },
+        { id: "8", name: "ВОРОПАЕВ Сергей Вячеславович" },
+        { id: "9", name: "КАРАСЕВ Иван Сергеевич" },
+        { id: "10", name: "КЛИМАНОВ Артём Максимович" },
+        { id: "11", name: "КОБАК Андрей Александрович" },
+        { id: "12", name: "ЛАТЫШЕВА Анна Юрьевна" },
+        { id: "13", name: "МЕЛЬНИК Матвей Игоревич" },
+        { id: "14", name: "МИРИМЯН Сурен Гургенович" },
+        { id: "15", name: "НЕВЕРОВ Максим Иванович" },
+        { id: "16", name: "НЕСТЕРОВ Максим Сергеевич" },
+        { id: "17", name: "ОЛИНОВ Савелий Александрович" },
+        { id: "18", name: "ПАВЛЕНКО Даниил Дмитриевич" },
+        { id: "19", name: "ПАВЛУЦКИЙ Владимир Иванович" },
+        { id: "20", name: "ПИСКАЕВА Дарья Алексеевна" },
+        { id: "21", name: "ПОДОСИННИКОВА Полина Олеговна" },
+        { id: "22", name: "ПРОСКУРЯКОВ Кирилл Артемович" },
+        { id: "23", name: "РОМАШКИНА Дарья Антоновна" },
+        { id: "24", name: "САВЧУК Нестор Сергеевич" },
+        { id: "25", name: "САМАРИН Дмитрий Андреевич" },
+        { id: "26", name: "САФОНОВ Павел Алексеевич" },
+        { id: "27", name: "СОМАЛЮК Ярослав Александрович" },
+        { id: "28", name: "СТЕПАНЕЦ Мария Ивановна" },
+        { id: "29", name: "ШВЕДЧИКОВА Юлия Сергеевна" }
+      ],
 
-  "3ИСиП-24": [
-    { id: "1", name: "БАБУШКИН Сергей Павлович" },
-    { id: "2", name: "БЕСКАРАВАЙНЫЙ Матвей Евгеньевич" },
-    { id: "3", name: "ВОЛОСАТОВА Мария Андреевна" },
-    { id: "4", name: "ГИЛЁВ Максим Константинович" },
-    { id: "5", name: "ЕГОРОВ Лев Сергеевич" },
-    { id: "6", name: "ЖДАНОВ Семён Андреевич" },
-    { id: "7", name: "ЗМЫЗГОВА Татьяна Васильевна" },
-    { id: "8", name: "ИВАНОВА Елизавета Александровна" },
-    { id: "9", name: "ИВАНОВА Ольга Андреевна" },
-    { id: "10", name: "КУЛИКОВА Виктория Алексеевна" },
-    { id: "11", name: "КУШЕКБАЕВА Кира Юрьевна" },
-    { id: "12", name: "ЛЕБЕДЕВ Михаил Сергеевич" },
-    { id: "13", name: "ЛЕОНОВ Дмитрий Максимович" },
-    { id: "14", name: "МОЛЧАНОВА Маргарита Михайловна" },
-    { id: "15", name: "МЯКИШЕВ Даниил Сергеевич" },
-    { id: "16", name: "НЕВИДИМОВА Кристина Максимовна" },
-    { id: "17", name: "НОВИЧКОВ Силантий Андреевич" },
-    { id: "18", name: "ПАВЛОВА Анастасия Олеговна" },
-    { id: "19", name: "ПИРВА Денис Сергеевич" },
-    { id: "20", name: "РУДЕНКО Александр Александрович" },
-    { id: "21", name: "РУЗМЕТОВ Тимур Русланович" },
-    { id: "22", name: "САНЗУЕВА Туяна Санжасуруновна" },
-    { id: "23", name: "СКАЧКОВ Роман Николаевич" },
-    { id: "24", name: "СМИРНОВА Дарья Владимировна" },
-    { id: "25", name: "СОЛДАТОВА Ксения Павловна" },
-    { id: "26", name: "ТВЕРСКОВ Виталий Михайлович" },
-    { id: "27", name: "ТОЛМАЧЕВ Степан Игоревич" },
-    { id: "28", name: "ХАЗАГАЕВА Юлия Владимировна" },
-    { id: "29", name: "ЦВЕТИНСКИХ Александр Константинович" },
-    { id: "30", name: "ЭПОВ Никита Сергеевич" }
-  ]
-};
+      "3ИСиП-24": [
+        { id: "1", name: "БАБУШКИН Сергей Павлович" },
+        { id: "2", name: "БЕСКАРАВАЙНЫЙ Матвей Евгеньевич" },
+        { id: "3", name: "ВОЛОСАТОВА Мария Андреевна" },
+        { id: "4", name: "ГИЛЁВ Максим Константинович" },
+        { id: "5", name: "ЕГОРОВ Лев Сергеевич" },
+        { id: "6", name: "ЖДАНОВ Семён Андреевич" },
+        { id: "7", name: "ЗМЫЗГОВА Татьяна Васильевна" },
+        { id: "8", name: "ИВАНОВА Елизавета Александровна" },
+        { id: "9", name: "ИВАНОВА Ольга Андреевна" },
+        { id: "10", name: "КУЛИКОВА Виктория Алексеевна" },
+        { id: "11", name: "КУШЕКБАЕВА Кира Юрьевна" },
+        { id: "12", name: "ЛЕБЕДЕВ Михаил Сергеевич" },
+        { id: "13", name: "ЛЕОНОВ Дмитрий Максимович" },
+        { id: "14", name: "МОЛЧАНОВА Маргарита Михайловна" },
+        { id: "15", name: "МЯКИШЕВ Даниил Сергеевич" },
+        { id: "16", name: "НЕВИДИМОВА Кристина Максимовна" },
+        { id: "17", name: "НОВИЧКОВ Силантий Андреевич" },
+        { id: "18", name: "ПАВЛОВА Анастасия Олеговна" },
+        { id: "19", name: "ПИРВА Денис Сергеевич" },
+        { id: "20", name: "РУДЕНКО Александр Александрович" },
+        { id: "21", name: "РУЗМЕТОВ Тимур Русланович" },
+        { id: "22", name: "САНЗУЕВА Туяна Санжасуруновна" },
+        { id: "23", name: "СКАЧКОВ Роман Николаевич" },
+        { id: "24", name: "СМИРНОВА Дарья Владимировна" },
+        { id: "25", name: "СОЛДАТОВА Ксения Павловна" },
+        { id: "26", name: "ТВЕРСКОВ Виталий Михайлович" },
+        { id: "27", name: "ТОЛМАЧЕВ Степан Игоревич" },
+        { id: "28", name: "ХАЗАГАЕВА Юлия Владимировна" },
+        { id: "29", name: "ЦВЕТИНСКИХ Александр Константинович" },
+        { id: "30", name: "ЭПОВ Никита Сергеевич" }
+      ]
+    };
 
-
+    // === Состояние ===
     let currentGroup = "3ИСиП-24";
     let currentStudents = [];
     let selectedStudent = null;
+    let submittedIds = JSON.parse(localStorage.getItem('submittedEmails') || '{}');
 
+    // === DOM элементы ===
     const tabs = document.querySelectorAll(".tab");
-
     const formView = document.getElementById("formView");
     const confirmView = document.getElementById("confirmView");
     const successView = document.getElementById("successView");
 
-    const studentSelect = document.getElementById("studentSelect");
-    const emailInput = document.getElementById("emailInput");
+    const dropdownTrigger = document.getElementById("dropdownTrigger");
+    const dropdownMenu = document.getElementById("dropdownMenu");
 
+    const emailInput = document.getElementById("emailInput");
     const nextBtn = document.getElementById("nextBtn");
     const backBtn = document.getElementById("backBtn");
     const submitBtn = document.getElementById("submitBtn");
-    const resetBtn = document.getElementById("resetBtn");
 
     const confirmName = document.getElementById("confirmName");
     const confirmEmail = document.getElementById("confirmEmail");
 
+    const confirmRowName = document.getElementById("confirmRowName");
+    const confirmRowEmail = document.getElementById("confirmRowEmail");
+    const checkName = document.getElementById("checkName");
+    const checkEmail = document.getElementById("checkEmail");
+
+    // === Функции ===
+
+    function getSubmittedIds(group) {
+      return submittedIds[group] || [];
+    }
+
+    function markAsSubmitted(group, studentId) {
+      if (!submittedIds[group]) {
+        submittedIds[group] = [];
+      }
+      if (!submittedIds[group].includes(studentId)) {
+        submittedIds[group].push(studentId);
+      }
+      localStorage.setItem('submittedEmails', JSON.stringify(submittedIds));
+    }
 
     function normalizeStudents(group) {
       const rawList = STUDENTS[group] || [];
 
       return rawList.map((item, index) => {
-        // Если вдруг вы запишете просто строками:
-        // ["Иванов Иван Иванович", "Петров Пётр Петрович"]
         if (typeof item === "string") {
           return {
             id: item,
@@ -383,31 +869,81 @@
       }).filter(item => item.name.trim() !== "");
     }
 
-
     function renderStudents() {
       currentStudents = normalizeStudents(currentGroup);
       selectedStudent = null;
 
-      studentSelect.innerHTML = '<option value="">-- Выберите ФИО --</option>';
+      dropdownTrigger.textContent = "-- Выберите ФИО --";
+      dropdownTrigger.classList.add("placeholder");
+      dropdownTrigger.classList.remove("open");
+
+      dropdownMenu.innerHTML = "";
+
+      const submittedInGroup = getSubmittedIds(currentGroup);
 
       currentStudents.forEach((student, index) => {
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = student.name;
-        studentSelect.appendChild(option);
+        const item = document.createElement("div");
+        item.className = "dropdown-item";
+        item.dataset.index = index;
+        item.textContent = student.name;
+
+        // Если уже отправлял - делаем неактивным
+        if (submittedInGroup.includes(student.id)) {
+          item.classList.add("submitted");
+          item.title = "Уже отправлено";
+        } else {
+          item.addEventListener("click", () => selectStudent(index, item));
+        }
+
+        dropdownMenu.appendChild(item);
       });
 
       validateForm();
     }
 
+    function selectStudent(index, element) {
+      if (element.classList.contains("submitted")) return;
+
+      selectedStudent = currentStudents[index];
+
+      // Обновляем визуал
+      dropdownMenu.querySelectorAll(".dropdown-item").forEach(el => {
+        el.classList.remove("selected");
+      });
+      element.classList.add("selected");
+
+      dropdownTrigger.textContent = selectedStudent.name;
+      dropdownTrigger.classList.remove("placeholder");
+      closeDropdown();
+
+      validateForm();
+    }
+
+    function toggleDropdown() {
+      if (dropdownMenu.classList.contains("open")) {
+        closeDropdown();
+      } else {
+        openDropdown();
+      }
+    }
+
+    function openDropdown() {
+      dropdownMenu.classList.add("open");
+      dropdownTrigger.classList.add("open");
+    }
+
+    function closeDropdown() {
+      dropdownMenu.classList.remove("open");
+      dropdownTrigger.classList.remove("open");
+    }
 
     function validateForm() {
       const email = emailInput.value.trim();
       const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+      const studentSelected = selectedStudent !== null;
 
-      nextBtn.disabled = !(selectedStudent && emailValid);
+      nextBtn.disabled = !(studentSelected && emailValid);
     }
-
 
     function showForm() {
       formView.classList.remove("hidden");
@@ -419,6 +955,17 @@
       formView.classList.add("hidden");
       confirmView.classList.remove("hidden");
       successView.classList.add("hidden");
+
+      // Сбрасываем чекбоксы
+      checkName.checked = false;
+      checkEmail.checked = false;
+      confirmRowName.classList.remove("checked");
+      confirmRowEmail.classList.remove("checked");
+
+      confirmName.textContent = selectedStudent.name;
+      confirmEmail.textContent = emailInput.value.trim();
+
+      updateSubmitButton();
     }
 
     function showSuccess() {
@@ -427,55 +974,88 @@
       successView.classList.remove("hidden");
     }
 
+    function updateSubmitButton() {
+      submitBtn.disabled = !(checkName.checked && checkEmail.checked);
+    }
 
+    // === Обработчики событий ===
+
+    // Вкладки
     tabs.forEach(tab => {
       tab.addEventListener("click", () => {
         tabs.forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
-
         currentGroup = tab.dataset.group;
         renderStudents();
         showForm();
       });
     });
 
-
-    studentSelect.addEventListener("change", () => {
-      const selectedIndex = Number(studentSelect.value);
-
-      if (studentSelect.value === "" || Number.isNaN(selectedIndex)) {
-        selectedStudent = null;
-      } else {
-        selectedStudent = currentStudents[selectedIndex];
-      }
-
-      validateForm();
+    // Dropdown
+    dropdownTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleDropdown();
     });
 
+    // Закрытие dropdown при клике вне
+    document.addEventListener("click", (e) => {
+      if (!dropdownTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        closeDropdown();
+      }
+    });
 
+    // Email ввод
     emailInput.addEventListener("input", validateForm);
 
-
+    // Кнопка "Далее"
     nextBtn.addEventListener("click", () => {
       if (!selectedStudent) return;
-
-      confirmName.textContent = selectedStudent.name;
-      confirmEmail.textContent = emailInput.value.trim();
-
       showConfirm();
     });
 
-
+    // Кнопка "Назад"
     backBtn.addEventListener("click", () => {
       showForm();
     });
 
+    // Чекбоксы подтверждения
+    confirmRowName.addEventListener("click", (e) => {
+      // Если кликнули не по ссылке и не по другому интерактивному элементу
+      if (e.target.tagName !== "A" && e.target.tagName !== "BUTTON") {
+        checkName.checked = !checkName.checked;
+        confirmRowName.classList.toggle("checked", checkName.checked);
+        updateSubmitButton();
+      }
+    });
 
+    confirmRowEmail.addEventListener("click", (e) => {
+      if (e.target.tagName !== "A" && e.target.tagName !== "BUTTON") {
+        checkEmail.checked = !checkEmail.checked;
+        confirmRowEmail.classList.toggle("checked", checkEmail.checked);
+        updateSubmitButton();
+      }
+    });
+
+    // Предотвращаем всплытие от чекбокса, чтобы не срабатывал двойной клик
+    checkName.addEventListener("click", (e) => e.stopPropagation());
+    checkEmail.addEventListener("click", (e) => e.stopPropagation());
+
+    checkName.addEventListener("change", () => {
+      confirmRowName.classList.toggle("checked", checkName.checked);
+      updateSubmitButton();
+    });
+
+    checkEmail.addEventListener("change", () => {
+      confirmRowEmail.classList.toggle("checked", checkEmail.checked);
+      updateSubmitButton();
+    });
+
+    // Отправка данных
     submitBtn.addEventListener("click", async () => {
       if (!selectedStudent) return;
 
       submitBtn.disabled = true;
-      submitBtn.textContent = "Отправка...";
+      submitBtn.innerHTML = '<span class="spinner"></span>Отправка...';
 
       const payload = {
         group: currentGroup,
@@ -497,28 +1077,21 @@
         const result = await response.json();
 
         if (result.success) {
+          // Сохраняем в localStorage, что этот студент уже отправил
+          markAsSubmitted(currentGroup, selectedStudent.id);
           showSuccess();
         } else {
           alert(result.error || "Не удалось отправить данные");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Отправить";
         }
       } catch (error) {
         console.error(error);
         alert("Ошибка сети. Попробуйте еще раз.");
-      } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Отправить";
       }
     });
-
-
-    resetBtn.addEventListener("click", () => {
-      emailInput.value = "";
-      studentSelect.value = "";
-      selectedStudent = null;
-      validateForm();
-      showForm();
-    });
-
 
     // Первая отрисовка
     renderStudents();
