@@ -29,7 +29,6 @@
       position: relative;
     }
 
-    /* Анимированные круги на фоне */
     body::before,
     body::after {
       content: '';
@@ -97,14 +96,64 @@
       letter-spacing: -0.5px;
     }
 
+    /* ===== ПЛАВНЫЕ ПЕРЕХОДЫ МЕЖДУ ОКНАМИ ===== */
     .view {
-      animation: fadeIn 0.4s ease;
+      width: 100%;
     }
 
-    @keyframes fadeIn {
+    .hidden {
+      display: none !important;
+    }
+
+    /* Анимации выхода */
+    @keyframes slideOutLeft {
+      to {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+    }
+
+    @keyframes slideOutRight {
+      to {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+    }
+
+    @keyframes slideOutUp {
+      to {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+      }
+    }
+
+    /* Анимации входа */
+    @keyframes slideInRight {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
       }
       to {
         opacity: 1;
@@ -112,11 +161,18 @@
       }
     }
 
-    .hidden {
-      display: none !important;
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
-    /* Вкладки групп */
+    /* ===== ВКЛАДКИ ===== */
     .tabs {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -154,7 +210,6 @@
       transform: scale(0.96);
     }
 
-    /* Поля формы */
     .form-group {
       margin-bottom: 20px;
     }
@@ -189,7 +244,7 @@
       cursor: not-allowed;
     }
 
-    /* Кастомный dropdown */
+    /* ===== КАСТОМНЫЙ DROPDOWN ===== */
     .dropdown {
       position: relative;
     }
@@ -293,17 +348,7 @@
       font-weight: 600;
     }
 
-    .dropdown-item.submitted {
-      color: #d1d5db;
-      text-decoration: line-through;
-      cursor: not-allowed;
-    }
-
-    .dropdown-item.submitted:hover {
-      background: transparent;
-    }
-
-    /* Кнопки */
+    /* ===== КНОПКИ ===== */
     button {
       width: 100%;
       border: none;
@@ -351,7 +396,7 @@
       color: #374151;
     }
 
-    /* Подтверждение */
+    /* ===== ПОДТВЕРЖДЕНИЕ ===== */
     .confirm-box {
       background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
       border-radius: 16px;
@@ -391,7 +436,6 @@
       transform: scale(0.99);
     }
 
-    /* Кастомный чекбокс */
     .checkbox-wrapper {
       position: relative;
       flex-shrink: 0;
@@ -464,7 +508,7 @@
       word-break: break-word;
     }
 
-    /* Успех */
+    /* ===== УСПЕХ ===== */
     .success-box {
       text-align: center;
       padding: 20px 0;
@@ -534,7 +578,6 @@
       text-align: center;
     }
 
-    /* Спиннер загрузки */
     .spinner {
       display: inline-block;
       width: 18px;
@@ -551,7 +594,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Адаптив */
     @media (max-width: 480px) {
       body {
         padding: 12px;
@@ -587,7 +629,6 @@
       }
     }
 
-    /* Отключение выделения на мобилках */
     .no-select {
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -595,7 +636,6 @@
       user-select: none;
     }
 
-    /* Скрытый скроллбар в dropdown */
     .dropdown-menu::-webkit-scrollbar {
       width: 6px;
     }
@@ -811,9 +851,9 @@
     let currentGroup = "3ИСиП-24";
     let currentStudents = [];
     let selectedStudent = null;
-    let submittedIds = JSON.parse(localStorage.getItem('submittedEmails') || '{}');
+    let isAnimating = false; // Защита от множественных кликов во время анимации
 
-    // === DOM элементы ===
+    // === DOM ===
     const tabs = document.querySelectorAll(".tab");
     const formView = document.getElementById("formView");
     const confirmView = document.getElementById("confirmView");
@@ -835,21 +875,47 @@
     const checkName = document.getElementById("checkName");
     const checkEmail = document.getElementById("checkEmail");
 
-    // === Функции ===
+    // === ФУНКЦИЯ ПЛАВНОГО ПЕРЕХОДА МЕЖДУ ОКНАМИ ===
+    // direction: 'forward' (вперёд), 'backward' (назад), 'success' (финальный успех)
+    function switchView(from, to, direction = 'forward') {
+      if (isAnimating) return;
+      if (from === to) return;
+      
+      isAnimating = true;
 
-    function getSubmittedIds(group) {
-      return submittedIds[group] || [];
+      let outAnim, inAnim;
+      const duration = 400;
+
+      if (direction === 'forward') {
+        outAnim = 'slideOutLeft';
+        inAnim = 'slideInRight';
+      } else if (direction === 'backward') {
+        outAnim = 'slideOutRight';
+        inAnim = 'slideInLeft';
+      } else if (direction === 'success') {
+        outAnim = 'slideOutUp';
+        inAnim = 'scaleIn';
+      }
+
+      // Анимируем выход текущего окна
+      from.style.animation = `${outAnim} ${duration}ms forwards cubic-bezier(0.4, 0, 0.2, 1)`;
+
+      setTimeout(() => {
+        from.classList.add('hidden');
+        from.style.animation = '';
+
+        // Показываем новое окно и анимируем его появление
+        to.classList.remove('hidden');
+        to.style.animation = `${inAnim} ${duration}ms forwards cubic-bezier(0.4, 0, 0.2, 1)`;
+
+        setTimeout(() => {
+          to.style.animation = '';
+          isAnimating = false;
+        }, duration);
+      }, duration);
     }
 
-    function markAsSubmitted(group, studentId) {
-      if (!submittedIds[group]) {
-        submittedIds[group] = [];
-      }
-      if (!submittedIds[group].includes(studentId)) {
-        submittedIds[group].push(studentId);
-      }
-      localStorage.setItem('submittedEmails', JSON.stringify(submittedIds));
-    }
+    // === ФУНКЦИИ ===
 
     function normalizeStudents(group) {
       const rawList = STUDENTS[group] || [];
@@ -879,21 +945,13 @@
 
       dropdownMenu.innerHTML = "";
 
-      const submittedInGroup = getSubmittedIds(currentGroup);
-
       currentStudents.forEach((student, index) => {
         const item = document.createElement("div");
         item.className = "dropdown-item";
         item.dataset.index = index;
         item.textContent = student.name;
 
-        // Если уже отправлял - делаем неактивным
-        if (submittedInGroup.includes(student.id)) {
-          item.classList.add("submitted");
-          item.title = "Уже отправлено";
-        } else {
-          item.addEventListener("click", () => selectStudent(index, item));
-        }
+        item.addEventListener("click", () => selectStudent(index, item));
 
         dropdownMenu.appendChild(item);
       });
@@ -902,11 +960,8 @@
     }
 
     function selectStudent(index, element) {
-      if (element.classList.contains("submitted")) return;
-
       selectedStudent = currentStudents[index];
 
-      // Обновляем визуал
       dropdownMenu.querySelectorAll(".dropdown-item").forEach(el => {
         el.classList.remove("selected");
       });
@@ -945,82 +1000,60 @@
       nextBtn.disabled = !(studentSelected && emailValid);
     }
 
-    function showForm() {
-      formView.classList.remove("hidden");
-      confirmView.classList.add("hidden");
-      successView.classList.add("hidden");
-    }
-
-    function showConfirm() {
-      formView.classList.add("hidden");
-      confirmView.classList.remove("hidden");
-      successView.classList.add("hidden");
-
-      // Сбрасываем чекбоксы
-      checkName.checked = false;
-      checkEmail.checked = false;
-      confirmRowName.classList.remove("checked");
-      confirmRowEmail.classList.remove("checked");
-
-      confirmName.textContent = selectedStudent.name;
-      confirmEmail.textContent = emailInput.value.trim();
-
-      updateSubmitButton();
-    }
-
-    function showSuccess() {
-      formView.classList.add("hidden");
-      confirmView.classList.add("hidden");
-      successView.classList.remove("hidden");
-    }
-
     function updateSubmitButton() {
       submitBtn.disabled = !(checkName.checked && checkEmail.checked);
     }
 
-    // === Обработчики событий ===
+    function resetConfirmCheckboxes() {
+      checkName.checked = false;
+      checkEmail.checked = false;
+      confirmRowName.classList.remove("checked");
+      confirmRowEmail.classList.remove("checked");
+      updateSubmitButton();
+    }
 
-    // Вкладки
+    // === ОБРАБОТЧИКИ ===
+
     tabs.forEach(tab => {
       tab.addEventListener("click", () => {
         tabs.forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
         currentGroup = tab.dataset.group;
         renderStudents();
-        showForm();
       });
     });
 
-    // Dropdown
     dropdownTrigger.addEventListener("click", (e) => {
       e.stopPropagation();
       toggleDropdown();
     });
 
-    // Закрытие dropdown при клике вне
     document.addEventListener("click", (e) => {
       if (!dropdownTrigger.contains(e.target) && !dropdownMenu.contains(e.target)) {
         closeDropdown();
       }
     });
 
-    // Email ввод
     emailInput.addEventListener("input", validateForm);
 
-    // Кнопка "Далее"
+    // Переход на подтверждение (forward)
     nextBtn.addEventListener("click", () => {
       if (!selectedStudent) return;
-      showConfirm();
+
+      confirmName.textContent = selectedStudent.name;
+      confirmEmail.textContent = emailInput.value.trim();
+      resetConfirmCheckboxes();
+
+      switchView(formView, confirmView, 'forward');
     });
 
-    // Кнопка "Назад"
+    // Возврат назад (backward)
     backBtn.addEventListener("click", () => {
-      showForm();
+      switchView(confirmView, formView, 'backward');
     });
 
     // Чекбоксы подтверждения
     confirmRowName.addEventListener("click", (e) => {
-      // Если кликнули не по ссылке и не по другому интерактивному элементу
       if (e.target.tagName !== "A" && e.target.tagName !== "BUTTON") {
         checkName.checked = !checkName.checked;
         confirmRowName.classList.toggle("checked", checkName.checked);
@@ -1036,7 +1069,6 @@
       }
     });
 
-    // Предотвращаем всплытие от чекбокса, чтобы не срабатывал двойной клик
     checkName.addEventListener("click", (e) => e.stopPropagation());
     checkEmail.addEventListener("click", (e) => e.stopPropagation());
 
@@ -1052,7 +1084,7 @@
 
     // Отправка данных
     submitBtn.addEventListener("click", async () => {
-      if (!selectedStudent) return;
+      if (!selectedStudent || isAnimating) return;
 
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="spinner"></span>Отправка...';
@@ -1077,9 +1109,8 @@
         const result = await response.json();
 
         if (result.success) {
-          // Сохраняем в localStorage, что этот студент уже отправил
-          markAsSubmitted(currentGroup, selectedStudent.id);
-          showSuccess();
+          // Переход на экран успеха (особая анимация)
+          switchView(confirmView, successView, 'success');
         } else {
           alert(result.error || "Не удалось отправить данные");
           submitBtn.disabled = false;
