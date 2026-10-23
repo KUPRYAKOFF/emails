@@ -1,191 +1,528 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подтверждение Email</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { text-align: center; color: #333; margin-top: 0; }
-        .tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid #eee; }
-        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; color: #666; font-weight: bold; transition: 0.3s; border-bottom: 3px solid transparent; }
-        .tab.active { color: #007bff; border-bottom: 3px solid #007bff; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
-        select, input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        select:focus, input:focus { outline: none; border-color: #007bff; }
-        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        button:hover:not(:disabled) { background: #0056b3; }
-        .confirm-view { text-align: center; }
-        .confirm-view p { font-size: 18px; margin: 10px 0; color: #333; }
-        .confirm-view .label { font-weight: bold; color: #555; }
-        .success-msg { color: green; font-weight: bold; text-align: center; font-size: 18px; margin-top: 20px; }
-        .hidden { display: none; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подтверждение email</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      font-size: 24px;
+      text-align: center;
+      color: #222;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      flex: 1;
+      min-width: 110px;
+      padding: 10px;
+      border: 1px solid #d9dee3;
+      border-radius: 8px;
+      background: #f8f9fa;
+      cursor: pointer;
+      text-align: center;
+      font-weight: bold;
+      color: #444;
+      transition: 0.2s;
+      user-select: none;
+    }
+
+    .tab.active {
+      background: #0d6efd;
+      border-color: #0d6efd;
+      color: #fff;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cfd6dd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      background: #fff;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: #0d6efd;
+      color: white;
+      font-weight: bold;
+    }
+
+    .btn-primary:disabled {
+      background: #b9c6d3;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .btn-success {
+      background: #198754;
+      color: white;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .confirm-box {
+      background: #f8f9fa;
+      border: 1px solid #e0e5ea;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .confirm-row {
+      margin-bottom: 10px;
+      font-size: 17px;
+      color: #222;
+    }
+
+    .confirm-label {
+      font-weight: bold;
+    }
+
+    .success-box {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .success-title {
+      color: #198754;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #6c757d;
+      line-height: 1.4;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Введите ваш Email</h2>
-    
-    <!-- Вкладки групп -->
-    <div class="tabs">
+  <div class="card">
+    <h1>Подтверждение email</h1>
+
+    <!-- Форма выбора -->
+    <div id="formView">
+      <div class="tabs">
         <div class="tab active" data-group="3ИСиП-24">3ИСиП-24</div>
         <div class="tab" data-group="3КСК-24">3КСК-24</div>
         <div class="tab" data-group="3РЗ-24">3РЗ-24</div>
+      </div>
+
+      <div class="form-group">
+        <label for="studentSelect">Ваши ФИО</label>
+        <select id="studentSelect">
+          <option value="">-- Выберите ФИО --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="emailInput">Ваш email</label>
+        <input
+          type="email"
+          id="emailInput"
+          placeholder="example@mail.ru"
+          autocomplete="email"
+        >
+      </div>
+
+      <button id="nextBtn" class="btn-primary" disabled>Далее</button>
+
+      <div class="note">
+        После ввода данных нажмите «Далее» и проверьте информацию перед отправкой.
+      </div>
     </div>
 
-    <!-- Форма ввода -->
-    <div id="formView">
-        <div class="form-group">
-            <label for="studentSelect">Ваши ФИО:</label>
-            <select id="studentSelect">
-                <option value="">-- Выберите ФИО --</option>
-            </select>
+    <!-- Подтверждение -->
+    <div id="confirmView" class="hidden">
+      <div class="confirm-box">
+        <div class="confirm-row">
+          <span class="confirm-label">Ваше ФИО:</span>
+          <span id="confirmName"></span>
         </div>
-        <div class="form-group">
-            <label for="emailInput">Ваш Email:</label>
-            <input type="email" id="emailInput" placeholder="example@mail.ru">
+
+        <div class="confirm-row">
+          <span class="confirm-label">Ваш Email:</span>
+          <span id="confirmEmail"></span>
         </div>
-        <button id="nextBtn" disabled>Далее</button>
+      </div>
+
+      <button id="submitBtn" class="btn-primary">Отправить</button>
+      <button id="backBtn" class="btn-secondary">Назад</button>
     </div>
 
-    <!-- Экран подтверждения -->
-    <div id="confirmView" class="confirm-view hidden">
-        <p><span class="label">Ваше ФИО:</span> <span id="confirmName"></span></p>
-        <p><span class="label">Ваш Email:</span> <span id="confirmEmail"></span></p>
-        <br>
-        <button id="submitBtn">Отправить</button>
-        <br><br>
-        <button id="backBtn" style="background: #6c757d;">Назад (Изменить)</button>
-    </div>
-
-    <!-- Сообщение об успехе -->
+    <!-- Успех -->
     <div id="successView" class="hidden">
-        <div class="success-msg">✅ Данные успешно отправлены!</div>
+      <div class="success-box">
+        <div class="success-title">Данные успешно отправлены</div>
+        <button id="resetBtn" class="btn-success">Заполнить заново</button>
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
-    // ВСТАВЬТЕ СЮДА URL ИЗ GOOGLE APPS SCRIPT (Шаг 2)
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwbK98JMZWjH3LENigJ-1hxmPyQsF5-bU80vrghjUeXikBruGi6f6FLJ2Jv7J2zQC0E/exec";
+  <script>
+    /*****************************************************
+     * ВСТАВЬТЕ СЮДА URL ИЗ GOOGLE APPS SCRIPT
+     *****************************************************/
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxffG00zFwVomm1BKFpLE2sP5AUQbOrTlgDehkN2-pzNRYD_cTkktuVwAEuJb4f96gK/exec";
+
+
+    /*****************************************************
+     * ЗАПОЛНИТЕ МАССИВ СТУДЕНТОВ
+     *
+     * id — желательно должен совпадать со столбцом A
+     * name — ФИО из столбца B
+     *****************************************************/
+    const STUDENTS = {
+  "3РЗ-24": [
+    { id: "1", name: "АНАНЬЕВА Лариса Сергеевна" },
+    { id: "2", name: "АНДРИЯНОВА Ксения Олеговна" },
+    { id: "3", name: "БАЕВ Александр Геннадьевич" },
+    { id: "4", name: "БАХАРЕВ Иван Денисович" },
+    { id: "5", name: "БИКМУХАМЕТОВ Егор Романович" },
+    { id: "6", name: "ВЕТРОВ Илья Андреевич" },
+    { id: "7", name: "ГАМЕРОВА Ксения Денисовна" },
+    { id: "8", name: "ГОРДЕЕВ Андрей Евгеньевич" },
+    { id: "9", name: "ГУНГАЕВ Тимур Валерьевич" },
+    { id: "10", name: "ДАВЛЕЧИНОВ Илья Денисович" },
+    { id: "11", name: "ДАРЕЕВ Константин Анатольевич" },
+    { id: "12", name: "ЗАЙЦЕВ Роман Эдуардович" },
+    { id: "13", name: "ЗАЛУЦКИЙ Евгений Романович" },
+    { id: "14", name: "КЛИМЕНТЬЕВ Матвей Сергеевич" },
+    { id: "15", name: "КОРОБОЧКИН Алексей Эдуардович" },
+    { id: "16", name: "КОЧУРОВ Валерий Алексеевич" },
+    { id: "17", name: "КРУТОВ Виталий Владимирович" },
+    { id: "18", name: "ЛАВРОВ Артём Романович" },
+    { id: "19", name: "ЛАШИН Данила Денисович" },
+    { id: "20", name: "МЕРИНОВА Елизавета Геннадьевна" },
+    { id: "21", name: "НИКИТИН Артём Евгеньевич" },
+    { id: "22", name: "ПАВЛОВ Руслан Николаевич" },
+    { id: "23", name: "ПЕРЕЛЯЕВ Никита Алексеевич" },
+    { id: "24", name: "ПОДПРУГИН Денис Вячеславович" },
+    { id: "25", name: "ПРОХОДАНОВ Вадим Андреевич" },
+    { id: "26", name: "РЕШЕТОВ Родион Романович" },
+    { id: "27", name: "РОМАНОВ Никита Дмитриевич" },
+    { id: "28", name: "САЛАЦКИЙ Степан Викторович" },
+    { id: "29", name: "СОНГОЛОВ Тимур Эрдэниевич" },
+    { id: "30", name: "СТЁПИН Никита Вадимович" },
+    { id: "31", name: "ТРУХИН Максим Александрович" },
+    { id: "32", name: "ХОЛУЕВ Дмитрий Вячеславович" },
+    { id: "33", name: "ХРОМУШКИН Евгений Сергеевич" },
+    { id: "34", name: "ЧУЧУПАЛ Ярослав Дмитриевич" },
+    { id: "35", name: "ШПАКОВА Светлана Алексеевна" },
+    { id: "36", name: "ЩУКИН Роман Анатольевич" }
+  ],
+
+  "3КСК-24": [
+    { id: "1", name: "АЛЕКСАНДРОВ Николай Дмитриевич" },
+    { id: "2", name: "АРУТЮНЯНЦ Ярослав Романович" },
+    { id: "3", name: "БАКШЕЕВ Максим Евгеньевич" },
+    { id: "4", name: "БОГДАНОВ Юрий Алексеевич" },
+    { id: "5", name: "БОЛОГОВ Григорий Максимович" },
+    { id: "6", name: "БУШМАКИН Дмитрий Андреевич" },
+    { id: "7", name: "ВОЛОШИН Даниил Игоревич" },
+    { id: "8", name: "ВОРОПАЕВ Сергей Вячеславович" },
+    { id: "9", name: "КАРАСЕВ Иван Сергеевич" },
+    { id: "10", name: "КЛИМАНОВ Артём Максимович" },
+    { id: "11", name: "КОБАК Андрей Александрович" },
+    { id: "12", name: "ЛАТЫШЕВА Анна Юрьевна" },
+    { id: "13", name: "МЕЛЬНИК Матвей Игоревич" },
+    { id: "14", name: "МИРИМЯН Сурен Гургенович" },
+    { id: "15", name: "НЕВЕРОВ Максим Иванович" },
+    { id: "16", name: "НЕСТЕРОВ Максим Сергеевич" },
+    { id: "17", name: "ОЛИНОВ Савелий Александрович" },
+    { id: "18", name: "ПАВЛЕНКО Даниил Дмитриевич" },
+    { id: "19", name: "ПАВЛУЦКИЙ Владимир Иванович" },
+    { id: "20", name: "ПИСКАЕВА Дарья Алексеевна" },
+    { id: "21", name: "ПОДОСИННИКОВА Полина Олеговна" },
+    { id: "22", name: "ПРОСКУРЯКОВ Кирилл Артемович" },
+    { id: "23", name: "РОМАШКИНА Дарья Антоновна" },
+    { id: "24", name: "САВЧУК Нестор Сергеевич" },
+    { id: "25", name: "САМАРИН Дмитрий Андреевич" },
+    { id: "26", name: "САФОНОВ Павел Алексеевич" },
+    { id: "27", name: "СОМАЛЮК Ярослав Александрович" },
+    { id: "28", name: "СТЕПАНЕЦ Мария Ивановна" },
+    { id: "29", name: "ШВЕДЧИКОВА Юлия Сергеевна" }
+  ],
+
+  "3ИСиП-24": [
+    { id: "1", name: "БАБУШКИН Сергей Павлович" },
+    { id: "2", name: "БЕСКАРАВАЙНЫЙ Матвей Евгеньевич" },
+    { id: "3", name: "ВОЛОСАТОВА Мария Андреевна" },
+    { id: "4", name: "ГИЛЁВ Максим Константинович" },
+    { id: "5", name: "ЕГОРОВ Лев Сергеевич" },
+    { id: "6", name: "ЖДАНОВ Семён Андреевич" },
+    { id: "7", name: "ЗМЫЗГОВА Татьяна Васильевна" },
+    { id: "8", name: "ИВАНОВА Елизавета Александровна" },
+    { id: "9", name: "ИВАНОВА Ольга Андреевна" },
+    { id: "10", name: "КУЛИКОВА Виктория Алексеевна" },
+    { id: "11", name: "КУШЕКБАЕВА Кира Юрьевна" },
+    { id: "12", name: "ЛЕБЕДЕВ Михаил Сергеевич" },
+    { id: "13", name: "ЛЕОНОВ Дмитрий Максимович" },
+    { id: "14", name: "МОЛЧАНОВА Маргарита Михайловна" },
+    { id: "15", name: "МЯКИШЕВ Даниил Сергеевич" },
+    { id: "16", name: "НЕВИДИМОВА Кристина Максимовна" },
+    { id: "17", name: "НОВИЧКОВ Силантий Андреевич" },
+    { id: "18", name: "ПАВЛОВА Анастасия Олеговна" },
+    { id: "19", name: "ПИРВА Денис Сергеевич" },
+    { id: "20", name: "РУДЕНКО Александр Александрович" },
+    { id: "21", name: "РУЗМЕТОВ Тимур Русланович" },
+    { id: "22", name: "САНЗУЕВА Туяна Санжасуруновна" },
+    { id: "23", name: "СКАЧКОВ Роман Николаевич" },
+    { id: "24", name: "СМИРНОВА Дарья Владимировна" },
+    { id: "25", name: "СОЛДАТОВА Ксения Павловна" },
+    { id: "26", name: "ТВЕРСКОВ Виталий Михайлович" },
+    { id: "27", name: "ТОЛМАЧЕВ Степан Игоревич" },
+    { id: "28", name: "ХАЗАГАЕВА Юлия Владимировна" },
+    { id: "29", name: "ЦВЕТИНСКИХ Александр Константинович" },
+    { id: "30", name: "ЭПОВ Никита Сергеевич" }
+  ]
+};
+
 
     let currentGroup = "3ИСиП-24";
-    let selectedStudentId = "";
-    let selectedStudentName = "";
+    let currentStudents = [];
+    let selectedStudent = null;
 
-    const tabs = document.querySelectorAll('.tab');
-    const studentSelect = document.getElementById('studentSelect');
-    const emailInput = document.getElementById('emailInput');
-    const nextBtn = document.getElementById('nextBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    const backBtn = document.getElementById('backBtn');
-    
-    const formView = document.getElementById('formView');
-    const confirmView = document.getElementById('confirmView');
-    const successView = document.getElementById('successView');
+    const tabs = document.querySelectorAll(".tab");
 
-    // Переключение вкладок
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            currentGroup = tab.getAttribute('data-group');
-            loadStudents();
-        });
-    });
+    const formView = document.getElementById("formView");
+    const confirmView = document.getElementById("confirmView");
+    const successView = document.getElementById("successView");
 
-    // Загрузка студентов из Google Таблицы
-    async function loadStudents() {
-        studentSelect.innerHTML = '<option value="">-- Загрузка... --</option>';
-        try {
-            const response = await fetch(`${WEB_APP_URL}?group=${encodeURIComponent(currentGroup)}`);
-            const students = await response.json();
-            
-            studentSelect.innerHTML = '<option value="">-- Выберите ФИО --</option>';
-            students.forEach(s => {
-                const option = document.createElement('option');
-                option.value = s.id;
-                option.textContent = s.name;
-                studentSelect.appendChild(option);
-            });
-        } catch (error) {
-            studentSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
-            console.error(error);
+    const studentSelect = document.getElementById("studentSelect");
+    const emailInput = document.getElementById("emailInput");
+
+    const nextBtn = document.getElementById("nextBtn");
+    const backBtn = document.getElementById("backBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const confirmName = document.getElementById("confirmName");
+    const confirmEmail = document.getElementById("confirmEmail");
+
+
+    function normalizeStudents(group) {
+      const rawList = STUDENTS[group] || [];
+
+      return rawList.map((item, index) => {
+        // Если вдруг вы запишете просто строками:
+        // ["Иванов Иван Иванович", "Петров Пётр Петрович"]
+        if (typeof item === "string") {
+          return {
+            id: item,
+            name: item
+          };
         }
-        validateForm();
-    }
 
-    // Валидация формы (разблокировка кнопки)
-    function validateForm() {
-        const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
-        const isStudentSelected = studentSelect.value !== "";
-        nextBtn.disabled = !(isEmailValid && isStudentSelected);
-    }
-
-    studentSelect.addEventListener('change', () => {
-        selectedStudentId = studentSelect.value;
-        selectedStudentName = studentSelect.options[studentSelect.selectedIndex].text;
-        validateForm();
-    });
-
-    emailInput.addEventListener('input', validateForm);
-
-    // Переход к подтверждению
-    nextBtn.addEventListener('click', () => {
-        document.getElementById('confirmName').textContent = selectedStudentName;
-        document.getElementById('confirmEmail').textContent = emailInput.value;
-        formView.classList.add('hidden');
-        confirmView.classList.remove('hidden');
-    });
-
-    // Возврат к редактированию
-    backBtn.addEventListener('click', () => {
-        confirmView.classList.add('hidden');
-        formView.classList.remove('hidden');
-    });
-
-    // Отправка данных в Google Таблицу
-    submitBtn.addEventListener('click', async () => {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Отправка...";
-
-        const payload = {
-            group: currentGroup,
-            studentId: selectedStudentId,
-            email: emailInput.value
+        return {
+          id: String(item.id ?? item.number ?? item.num ?? item.name ?? index + 1),
+          name: String(item.name ?? item.fio ?? item.fullName ?? "")
         };
+      }).filter(item => item.name.trim() !== "");
+    }
 
-        try {
-            // redirect: 'follow' обязателен для Google Apps Script
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload),
-                redirect: 'follow' 
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                confirmView.classList.add('hidden');
-                successView.classList.remove('hidden');
-            } else {
-                alert("Ошибка: " + (result.error || "Неизвестная ошибка"));
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Отправить";
-            }
-        } catch (error) {
-            alert("Ошибка сети. Попробуйте еще раз.");
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Отправить";
-        }
+
+    function renderStudents() {
+      currentStudents = normalizeStudents(currentGroup);
+      selectedStudent = null;
+
+      studentSelect.innerHTML = '<option value="">-- Выберите ФИО --</option>';
+
+      currentStudents.forEach((student, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = student.name;
+        studentSelect.appendChild(option);
+      });
+
+      validateForm();
+    }
+
+
+    function validateForm() {
+      const email = emailInput.value.trim();
+      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+
+      nextBtn.disabled = !(selectedStudent && emailValid);
+    }
+
+
+    function showForm() {
+      formView.classList.remove("hidden");
+      confirmView.classList.add("hidden");
+      successView.classList.add("hidden");
+    }
+
+    function showConfirm() {
+      formView.classList.add("hidden");
+      confirmView.classList.remove("hidden");
+      successView.classList.add("hidden");
+    }
+
+    function showSuccess() {
+      formView.classList.add("hidden");
+      confirmView.classList.add("hidden");
+      successView.classList.remove("hidden");
+    }
+
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        currentGroup = tab.dataset.group;
+        renderStudents();
+        showForm();
+      });
     });
 
-    // Инициализация при загрузке страницы
-    loadStudents();
-</script>
+
+    studentSelect.addEventListener("change", () => {
+      const selectedIndex = Number(studentSelect.value);
+
+      if (studentSelect.value === "" || Number.isNaN(selectedIndex)) {
+        selectedStudent = null;
+      } else {
+        selectedStudent = currentStudents[selectedIndex];
+      }
+
+      validateForm();
+    });
+
+
+    emailInput.addEventListener("input", validateForm);
+
+
+    nextBtn.addEventListener("click", () => {
+      if (!selectedStudent) return;
+
+      confirmName.textContent = selectedStudent.name;
+      confirmEmail.textContent = emailInput.value.trim();
+
+      showConfirm();
+    });
+
+
+    backBtn.addEventListener("click", () => {
+      showForm();
+    });
+
+
+    submitBtn.addEventListener("click", async () => {
+      if (!selectedStudent) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Отправка...";
+
+      const payload = {
+        group: currentGroup,
+        studentId: selectedStudent.id,
+        studentName: selectedStudent.name,
+        email: emailInput.value.trim()
+      };
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload),
+          redirect: "follow"
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          showSuccess();
+        } else {
+          alert(result.error || "Не удалось отправить данные");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Ошибка сети. Попробуйте еще раз.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Отправить";
+      }
+    });
+
+
+    resetBtn.addEventListener("click", () => {
+      emailInput.value = "";
+      studentSelect.value = "";
+      selectedStudent = null;
+      validateForm();
+      showForm();
+    });
+
+
+    // Первая отрисовка
+    renderStudents();
+  </script>
 
 </body>
 </html>
